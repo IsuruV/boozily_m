@@ -1,0 +1,3 @@
+rootProject.name = 'booozly_mobile'
+
+include ':app'
