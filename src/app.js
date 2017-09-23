@@ -4,15 +4,13 @@ import { Provider } from 'react-redux';
 import { createStore, applyMiddleware } from 'redux';
 import reducers from './reducers';
 import ReduxThunk from 'redux-thunk';
-import LoginForm from './components/loginForm';
-import Router from './router';
-import { Scene, Router } from 'react-native-router-flux';
+import RouterComponent from './router';
 
 class App extends Component{
   render(){
     return(
       <Provider store={createStore(reducers, {}, applyMiddleware(ReduxThunk))}>
-          <Router/>
+          <RouterComponent/>
       </Provider>
     )
   }
