@@ -1,13 +1,11 @@
 import React, { Component } from 'react';
-import { Scene, Router, Actions } from 'react-native-router-flux';
+import { StackNavigator } from 'react-navigation';
 
-const RouterComponent = ()=>{
-  return(
-    <Router sceneStyle={{paddingTop:1}}>
-      <Scene key="root">
-      </Scene>
-    </Router>
-  )
-};
+import LocationGeoCoder from './components/locationGeoCoder';
+
+
+const RouterComponent = StackNavigator({
+  locator: { screen: LocationGeoCoder},
+})
 
 export default RouterComponent;
