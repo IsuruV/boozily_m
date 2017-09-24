@@ -8,4 +8,6 @@ export const LOGIN_USER_FAIL = 'login_user_fail';
 
 export const LOGIN_USER = 'login_user';
 
-export const EMPLOYEE_UPDATE = 'employee_update';
+export const USER_UPDATE = 'user_update';
+
+export const SET_LOCATION = 'set_location';

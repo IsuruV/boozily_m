@@ -1,5 +1,9 @@
 import React, { Component } from 'react';
-import { View, Text } from 'react-native';
+import { connect } from 'react-redux';
+import { View, Text, TextInput } from 'react-native';
+import Geocoder from 'react-native-geocoding';
+import { userUpdate, setUserLocation } from '../actions';
+import { Card, CardSection, Input } from './common';
 
 class LocationGeoCoder extends Component{
 
@@ -11,28 +15,36 @@ class LocationGeoCoder extends Component{
      },
  };
 
- constructor() {
-  super();
-  this.state = {
-    userLat: '',
-    userLng: '',
-    userCount: 0,
-  }
-}
-
 componentWillMount() {
-  this.getLocation();
+  this.getCoordinates();
 }
 
+componentDidMount(){
+  this.getCoordinates();
+}
 
-getLocation() {
+getLocation(result){
+  Geocoder.setApiKey('AIzaSyDqVBtpgKAI-87CQqAgzaATf3rgRolg6Uo');
+  Geocoder.getFromLatLng(result[0], result[1]).then(
+      json => {
+        console.log("LOGGED");
+        console.log(json.results);
+        var address_component = json.results[0].formatted_address;
+        console.log(address_component);
+        this.props.setUserLocation({lat: result[0], lng: result[1], location: address_component})
+        userUpdate
+      },
+      error => {
+        console.log(error);
+      }
+    );
+}
+
+getCoordinates() {
   navigator.geolocation.getCurrentPosition(
     (position) => {
       console.log(position);
-      this.setState({
-        userLat: position.coords.latitude,
-        userLng: position.coords.longitude
-      })
+     return this.getLocation([position.coords.latitude, position.coords.longitude])
     },
     (error) => console.log(error.message),
     {enableHighAccuracy: true, timeout: 20000}
@@ -41,12 +53,29 @@ getLocation() {
 
   render(){
     return(
-      <View>
-        <Text>Lat: {this.state.userLat}</Text>
-        <Text>Lat: {this.state.userLng}</Text>
-      </View>
+      <Card>
+        <CardSection>
+          <TextInput
+            style={inputStyle}
+            value={this.props.location}
+            onChangeText={(val) => this.props.userUpdate({prop: 'location', value: val}) }/>
+        </CardSection>
+      </Card>
     )
   }
 }
 
-export default LocationGeoCoder;
+const inputStyle = {
+    color: '#000',
+    paddingRight: 5,
+    paddingLeft: 5,
+    fontSize: 13,
+    lineHeight: 28,
+    flex: 2
+}
+
+const mapStateToProps = state =>{
+  const { late, lng, location } = state.user;
+  return { late, lng, location };
+}
+export default connect(mapStateToProps, { userUpdate, setUserLocation } )(LocationGeoCoder);
