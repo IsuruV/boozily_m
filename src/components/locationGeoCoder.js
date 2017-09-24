@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { View, Text, TextInput } from 'react-native';
 import Geocoder from 'react-native-geocoding';
+import { GooglePlacesAutocomplete } from 'react-native-google-places-autocomplete';
 import { userUpdate, setUserLocation } from '../actions';
 import { Card, CardSection, Input } from './common';
 
@@ -15,63 +16,58 @@ class LocationGeoCoder extends Component{
      },
  };
 
-componentWillMount() {
-  this.getCoordinates();
-}
+ componentWillMount() {
+   this.getCoordinates();
+  }
 
-componentDidMount(){
-  this.getCoordinates();
-}
-
-getLocation(result){
-  Geocoder.setApiKey('AIzaSyDqVBtpgKAI-87CQqAgzaATf3rgRolg6Uo');
-  Geocoder.getFromLatLng(result[0], result[1]).then(
-      json => {
-        console.log("LOGGED");
-        console.log(json.results);
-        var address_component = json.results[0].formatted_address;
-        console.log(address_component);
-        this.props.setUserLocation({lat: result[0], lng: result[1], location: address_component})
-        userUpdate
+  getCoordinates() {
+    navigator.geolocation.getCurrentPosition(
+      (position) => {
+        console.log(position);
+        this.props.setUserLocation({lat: position.coords.latitude, lng: position.coords.longitude})
       },
-      error => {
-        console.log(error);
-      }
-    );
-}
-
-getCoordinates() {
-  navigator.geolocation.getCurrentPosition(
-    (position) => {
-      console.log(position);
-     return this.getLocation([position.coords.latitude, position.coords.longitude])
-    },
-    (error) => console.log(error.message),
-    {enableHighAccuracy: true, timeout: 20000}
-  )
-}
+      (error) => console.log(error.message),
+      {enableHighAccuracy: true, timeout: 20000}
+    )
+  }
 
   render(){
     return(
-      <Card>
-        <CardSection>
-          <TextInput
-            style={inputStyle}
-            value={this.props.location}
-            onChangeText={(val) => this.props.userUpdate({prop: 'location', value: val}) }/>
-        </CardSection>
-      </Card>
-    )
-  }
-}
+      <GooglePlacesAutocomplete
+        enablePoweredByContainer={false}
+        placeholder='Enter Your Address'
+        minLength={2}
+        autoFocus={false}
+        returnKeyType={'search'}
+        listViewDisplayed='auto'
+        fetchDetails={true}
+        renderDescription={(row) => row.description}
+        onPress={(data, details = null) => {
+    console.log(data);
+    console.log(details);
+    this.props.setUserLocation({lat: details.geometry.location.lat, lng: details.geometry.location.lng, location: details.formatted_address })
+  }}
 
-const inputStyle = {
-    color: '#000',
-    paddingRight: 5,
-    paddingLeft: 5,
-    fontSize: 13,
-    lineHeight: 28,
-    flex: 2
+    query={{
+    // available options: https://developers.google.com/places/web-service/autocomplete
+      key: 'AIzaSyCe2TNPbV4Y7NmbgLKRK3JxF6tEDj8CaWo',
+      language: 'en',
+      types: 'address'
+    }}
+    styles={{
+      description: {
+        fontWeight: 'bold'
+      },
+      predefinedPlacesDescription: {
+        color: '#1faadb'
+      }
+    }}
+
+    nearbyPlacesAPI='GooglePlacesSearch'
+    debounce={200}
+  />
+      )
+  }
 }
 
 const mapStateToProps = state =>{
