@@ -11,6 +11,5 @@ export default (state = INITIAL_STATE, action) => {
       return {...state, lat, lng, location }
     default:
       return state;
-
   }
 };
