@@ -1,11 +1,12 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { View, Text, TextInput, ListView } from 'react-native';
+import { View, Text, TextInput, ListView, TouchableOpacity } from 'react-native';
 import Geocoder from 'react-native-geocoding';
 import { GooglePlacesAutocomplete } from 'react-native-google-places-autocomplete';
 import { userUpdate, setUserLocation, fetchStores } from '../actions';
 import { Card, CardSection, Input } from './common';
 import ProductRow from './productRow';
+import DrillDown from './drillDown';
 
 class productSelections extends Component{
   static navigationOptions = {
@@ -22,6 +23,7 @@ class productSelections extends Component{
     const ds = new ListView.DataSource({rowHasChanged: (r1, r2) => r1 !== r2});
     this.state = {
       dataSource: ds.cloneWithRows(['row 1', 'row 2', 'row 3', 'row 4', 'row 5', 'row 6', 'row 7', 'row 8']),
+      showModal: false
     };
   }
 
@@ -29,13 +31,22 @@ class productSelections extends Component{
    this.props.fetchStores(this.props.navigation.navigate.userLocation);
  }
 
+ displayModal(){
+   this.setState({showModal: true})
+ }
+
+ hideModal(){
+  this.setState({showModal: false})
+ }
+
  render(){
    return(
      <View>
-      <Text>{this.props.stores}</Text>
-      <ProductRow items={['Red', 'White', 'Sparkling']} title={'Wine'}/>
-      <ProductRow items={['Vodka', 'Bourbon', 'Gin', 'Rum']} title={'Liquor'}/>
-      <ProductRow items={['Mixers', 'Cups', 'Bitters']} title={'Extras'}/>
+      <Text style={{fontWeight: 'bold'}}>Selected Store: {this.props.stores.name}</Text>
+        <ProductRow items={['Red', 'White', 'Bubbly']} title={'Wine'}/>
+        <ProductRow items={['Vodka', 'Bourbon', 'Gin', 'Rum']} title={'Liquor'}/>
+        <ProductRow items={['Mixers', 'Cups', 'Bitters']} title={'Extras'}/>
+       <DrillDown/>
      </View>
    )
  }
@@ -48,7 +59,7 @@ const mapStateToProps = state =>{
   if(stores.length == 0){
     return {stores: 'Loading..'}
   }else{
-    return {stores: stores[0].address}
+    return {stores: stores[0]}
   }
 }
 export default connect(mapStateToProps, { fetchStores } )(productSelections);
