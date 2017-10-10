@@ -15,3 +15,7 @@ export const SET_LOCATION = 'set_location';
 export const GET_CLOSEST_STORES = 'get_closest_store';
 
 export const BASE_URL = 'http://localhost:3000/'
+
+export const CLOSE_MODAL = 'close_modal';
+
+export const OPEN_MODAL = 'open_modal';

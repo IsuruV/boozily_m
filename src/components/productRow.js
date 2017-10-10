@@ -1,9 +1,9 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { View, Text, TextInput, ListView } from 'react-native';
+import { View, Text, TextInput, ListView, TouchableOpacity } from 'react-native';
 import Geocoder from 'react-native-geocoding';
 import { GooglePlacesAutocomplete } from 'react-native-google-places-autocomplete';
-import { userUpdate, setUserLocation, fetchStores } from '../actions';
+import { userUpdate, setUserLocation, fetchStores, closeModal, openModal } from '../actions';
 import { Card, CardSection, Input } from './common';
 
 class ProductRow extends Component{
@@ -20,13 +20,23 @@ class ProductRow extends Component{
  render(){
    return(
       <Card>
-      <Text>{this.props.title}</Text>
+      <Text style={{fontWeight: 'bold'}}>{this.props.title}</Text>
         <CardSection>
         <ListView
           horizontal={true}
           style={{flex:1, paddingBottom: 10}}
           dataSource={this.state.dataSource}
-          renderRow={(rowData) => <Card><CardSection styles={{marginTop: 20, marginBottom: 20, marginRight: 20, marginLeft: 20}}><Text>{rowData}</Text></CardSection></Card>}
+          renderRow={(rowData) =>
+          <TouchableOpacity onPress={() => { this.props.openModal(this.state.dataSource) }} hitSlop={{top: 5, bottom: 5, left: 5, right: 5}}>
+            <View>
+                <Card>
+                  <CardSection styles={{marginTop: 20, marginBottom: 20, marginRight: 20, marginLeft: 20, height: 20, width: 67}}>
+                    <Text style={{textAlign: 'center'}} adjustsFontSizeToFit={true}>{rowData}</Text>
+                  </CardSection>
+                 </Card>
+            </View>
+          </TouchableOpacity>
+          }
           />
         </CardSection>
      </Card>
@@ -35,4 +45,5 @@ class ProductRow extends Component{
 
 }
 
-export default ProductRow;
+
+export default connect(null, { closeModal, openModal } )(ProductRow);
