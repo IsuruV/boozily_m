@@ -1,17 +1,9 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { Modal, Text, TouchableHighlight, View } from 'react-native';
-import { closeModal, openModal } from '../actions';
+import { closeModal } from '../actions';
 
 class DrillDown extends Component {
-  constructor(props){
-    super(props)
-    this.state = { modalVisible: props.modalVisible }
-  }
-
-  setModalVisible(visible) {
-    this.setState({modalVisible: visible});
-  }
 
   render() {
     return (
